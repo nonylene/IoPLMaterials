@@ -9,6 +9,9 @@ type exp =
   | BLit of bool
   | BinOp of binOp * exp * exp
   | IfExp of exp * exp * exp
+  | LetExp of id * exp * exp
 
-type program = 
-    Exp of exp
+type sentence = Decl of id * exp | Exp of exp
+
+type sentences = sentence list
+type program = sentence list

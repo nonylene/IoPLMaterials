@@ -5,12 +5,17 @@ let rec read_eval_print env =
   print_string "# ";
   flush stdout;
   try
-    let decl = Parser.toplevel Lexer.main (Lexing.from_channel stdin) in
-    let (id, newenv, v) = eval_decl env decl in
-      Printf.printf "val %s = " id;
-      pp_val v;
-      print_newline();
-      read_eval_print newenv
+    let sentences = Parser.sentences Lexer.main (Lexing.from_channel stdin) in
+    let newenv = List.fold_left (
+      fun env sentence ->
+        let (id, newenv, v) = eval_sentence env sentence in
+          Printf.printf "val %s = " id;
+          pp_val v;
+          print_newline();
+          newenv
+    ) env sentences in
+
+    read_eval_print newenv
   with
     e -> print_string @@ Printexc.to_string e;
     print_newline();
